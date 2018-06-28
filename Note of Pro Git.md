@@ -1,8 +1,11 @@
 # Pro Git学习笔记
 
-[TOC]
-
-## Git基础
+[Git简介](## Git简介)
+[安装Git](## G安装Git)
+[初次运行Git前的配置](## 初次运行Git前的配置)
+[Git基础](## Git基础)
+[Git分支](## Git分支)
+## Git简介
 
 1. 直接记录快照，而非差异比较
 2. 近乎所有操作都是本地执行
@@ -118,6 +121,121 @@ $ git init
 ```
 git clone [url]
 ```
+### 记录每次更新到仓库
+![](https://ws1.sinaimg.cn/large/0079wTXjgy1fsns4c405fj30n509rwfp)
+
+* 检查当前文件状态
+
+    ```
+    $ git status
+    ```
+
+* 跟踪新文件
+
+    ```
+    $ git add [file]
+    ```
+
+* 暂存已修改文件
+
+    ```
+    $ git add [file]
+    ```
+    
+* 状态简览
+
+    ```
+    $ git status -s/--short
+    ```
+
+* 忽略文件
+
+    创建一个名为`.gitignore`的文件，列出药忽略的文件模式。
+    
+    ```
+    $ cat .gitignore 
+    *.[oa] //忽略所有以.o或.a结尾的文件
+    *~     //忽略所有以~结尾的文件
+    ```
+    
+    > .gitignore的格式规范如下：
+    • 所有空行或者以 ＃ 开头的行都会被 Git 忽略。
+    • 可以使用标准的 glob 模式匹配。
+    • 匹配模式可以以（/）开头防止递归。
+    • 匹配模式可以以（/）结尾指定目录。
+    • 要忽略指定模式以外的文件或目录，可以在模式前加上惊叹号（!）取反。
+    
+    glob 模式是指 shell 所使用的简化了的正则表达式。 星号（\*）匹配零个或多个任意字符；[abc] 匹配任何一个列在方括号中的字符（这个例子要么匹配一个 a，要么匹配一个 b，要么匹配一个 c）；问号（? ）只匹配一个任意字符；如果在方括号中使用短划线分隔两个字符，表示所有在这两个字符范围内的都可以匹配 （比如 [0-9] 表示匹配所有 0 到 9 的数字）。 使用两个星号（\*) 表示匹配任意中间目录，比如\`a/**/z\` 可以匹 配 a/z, a/b/z 或 \`a/b/c/z\`等。
+    
+    > [.gitignore文件列表](https://github.com/github/gitignore)
+    
+* 查看已暂存和未暂存的修改
+
+    ```
+    $ git diff
+    ```
+
+## Git分支
+
+### 分支简介
+
+* 创建分支
+
+    ```
+    $ git branch bran-name
+    ```
+    
+* 切换分支
+
+    ```
+    $ git checkout bran-name
+    ```
+    
+* 查看分叉历史
+
+    ```
+    $ git log
+    $ git log --oneline --decorete --graph --all
+    ```
+    
+### 分支的新建与合并
+
+工作流：
+1. 开发某个网站
+2. 为实现某个需求，创建一个分支
+3. 在这个分支上展开工作
+有Bug需紧急处理：
+1. 切换到你的线上分支
+2. 为紧急任务创建一个新的分支，并修复它
+3. 测试通过后，切换回线上分支，合并这个修补分支，最后将改动推动到线上分支
+4. 切换回最初工作的分支，继续工作
+
+* 新建并切换分支
+
+    ```
+    $ git branch bran-name
+    $ git checkout bran-name
+    //简写
+    $ git checkout -b bran-name
+    ```
+    > 切换分支之前，保持干净的状态(提交还未被提交的修改)。也可以保存进度(stashing)和修补提交(commit amending)
+
+* 分支的合并
+
+    ```
+    $ git checkout master
+    Switched to branch 'master'
+    $ git merge bran-name
+    ```
+    
+* 分支的删除
+
+    ```
+    $ git branch -d bran-name
+    ```
+    
+* 遇到冲突时的分支合并
+
 
 
 
