@@ -1,0 +1,127 @@
+# Pro Git学习笔记
+
+[TOC]
+
+## Git基础
+
+1. 直接记录快照，而非差异比较
+2. 近乎所有操作都是本地执行
+3. Git保证完整性
+4. Git一般只添加数据
+5. 三种状态
+    * **以提交** -- 已提交表示数据已经安全的保存在本地数据库中
+    2. **已修改** -- 修改了文件，但还没保存到数据库中
+    3. **已暂存** -- 对一个已修改的文件的当前版本做了标记，使之包含在下次提交的快照中。
+6. 工作区域
+    * **Git仓库** -- 用来保存项目的元数据和对象数据库的地方，从其他计算基金克隆仓库时，拷贝的就是这里的数据
+    2. **工作目录** -- 对项目的某个版本独立提取出来的内容。这些从 Git 仓库的压缩数据库中提取出来的文件，放在磁盘 上供你使用或修改。
+    3. **暂存区域** -- 暂存区域是一个文件，保存了下次将提交的文件列表信息，一般在 Git 仓库目录中。 有时候也被称作`‘索 引’'，不过一般说法还是叫暂存区域。![](https://ws1.sinaimg.cn/large/0079wTXjgy1fsmpcjuov0j30jz0b1taa)
+
+
+
+
+      
+## 安装Git
+* Linux上安装
+
+```
+$ sudo yum install git
+    
+$ sudo apt-get install git
+```
+
+* Mac上安装
+安装Xcode Command Line Tools
+
+* Windows上安装
+[Git官网](git-scm.com/download/win)
+
+* 源代码安装
+从源码安装Git，需要安装Git以来的库：curl、zlib、openssl、expat和libiconv
+
+```
+$ sudo yum install curl-devel expat-devel gettext-devel \ openssl-devel zlib-devel 
+$ sudo apt-get install libcurl4-gnutls-dev libexpat1-dev gettext \ libz-dev libssl-dev
+```
+为了能够添加更多格式的文档（如 doc, html, info），你需要安装以下的依赖包：
+
+```
+$ sudo yum install asciidoc xmlto docbook2x 
+$ sudo apt-get install asciidoc xmlto docbook2x
+```
+[下载Git的tar包](https://www.kernel.org/pub/software/scm/git)
+
+```
+$ tar -zxf git-2.0.0.tar.gz 
+$ cd git-2.0.0 $ make configure $ ./configure --prefix=/usr 
+$ make all doc info 
+$ sudo make install install-doc install-html install-info
+```
+使用Git来获取Git的升级
+
+```
+git clone git://git.kernel.org/pub/scm/git/git.git
+```
+
+## 初次运行Git前的配置
+### 三个配置变量
+每一个级别覆盖上一级别的配置
+1. `/etc/gitconfig` 文件: 包含系统上每一个用户及他们仓库的通用配置。 如果使用带有 --system 选项的 git config 时，它会从此文件读写配置变量。
+2. `~/.gitconfig` 或 ~/.config/git/config 文件：只针对当前用户。 可以传递 --global 选项让 Git 读写此文件。
+3. `.git/config` 当前使用仓库的 Git 目录中的 config 文件（就是 .git/config）：针对该仓库。
+
+> 在Windows 系统中，Git 会查找 $HOME 目录下（一般情况下是 C:\Users\$USER）的 .gitconfig 文件。 Git 同样也会寻找 /etc/gitconfig 文件，但只限于 MSys 的根目录下，即安装 Git 时所选的目标位置。
+
+### 用户信息和文本编辑器
+设置用户名称和邮件地址，因为每一个Git的提交都会使用这些信息，并且会写入到你的每一次提交中，不可更改：
+
+```
+$ git config --gloabl user.name "username"
+$ git config --global user.email "user email"
+$ git config --global core.editor emacs
+//default vim
+```
+> 如果使用了 --global 选项，那么该命令只需要运行一次，因为之后无论你在该系统上做任何事 情， Git 都会使用那些信息。 
+> 当你想针对特定项目使用不同的用户名称与邮件地址时，可以在那个项目目录下运 行没有 --global 选项的命令来配置。
+
+检查配置信息
+
+```
+git config --list
+//check someone
+git config <key>
+```
+
+### 获取帮助
+Git命令使用手册
+
+```
+$ git help <verb>
+$ git  <verb> --help
+$ man git-<verb>
+```
+config命令手册
+
+```
+git help config
+```
+
+## Git基础
+
+### 获取Git仓库
+
+* 在现有目录中初始化仓库
+```
+$ git init
+```
+* 克隆现有的仓库
+```
+git clone [url]
+```
+
+
+
+
+
+
+
