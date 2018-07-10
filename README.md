@@ -8,6 +8,7 @@
 ## Python
 
 > [Python网络爬虫与信息提取](https://github.com/entercoder1993/Note-Book/blob/master/Python/Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E4%B8%8E%E4%BF%A1%E6%81%AF%E6%8F%90%E5%8F%96.md)
+> [Python爬虫开发实战](https://github.com/entercoder1993/Note-Book/blob/master/Python/Python%E7%BD%91%E7%BB%9C%E7%88%AC%E8%99%AB%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98.md)
 
 ## Tool
 
