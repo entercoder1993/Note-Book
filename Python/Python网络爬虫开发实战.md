@@ -593,10 +593,215 @@ with open('data.csv','w',encoding='utf-8') as csvfile:
   * 也可以使用pandas中的read_csv()方法将数据从CSV中读取出来
 
     ```python
+    import pandas as pd
     
+    df = pd.read_csv('data.csv')
+    print(df)
     ```
 
-    
+### 5.2 关系型数据库存储
+
+> 关系型数据库是基于关系模型的数据库，关系模型是通过二维表来保存的，所以它的存储方式就是行列组成的表，每一列就是一个字段，每一行就是一条记录。表可以看作某个实体的集合，而实体之间也存在联系，这就需要表与表之间的联系关系来体现，如主键外键的关联关系。多个表组成一个数据库，也就是关系型数据库。
+>
+> 关系型数据库有多种，如SQLite、MySQL、Oracle、SQL Server、DB2等。
+
+#### MySQL存储
+
+* 连接数据库
+
+  ```python
+  import pymysql
+  
+  # 通过PyMySQL的connect()方法声明一个MySQL连接duixiangdb
+  db = pymysql.connect(host='localhost',user='root',password='',port=3306)
+  # 连接成功后调用cursor()获取MySQL的操作游标
+  cursor = db.cursor()
+  # execute()方法执行sql语句
+  cursor.execute('SELECT VERSION()')
+  # 返回执行结果
+  data = cursor.fetchone()
+  print('Database version:',data)
+  cursor.execute('CREATE DATABASE spiders DEFAULT CHARACTER SET UTF8')
+  db.close()
+  ```
+
+* 创建表
+
+  ```python
+  import pymysql
+  
+  # 代码格式化 command + alt + L
+  db = pymysql.connect(host='localhost', user='root', password='', port=3306, db='spiders')
+  cursor = db.cursor()
+  sql = 'CREATE TABLE IF NOT EXISTS students (id VARCHAR(255) NOT NULL ,name VARCHAR(255) NOT NULL,age INT NOT NULL,PRIMARY KEY (id))'
+  cursor.execute(sql)
+  db.close()
+  ```
+
+* 插入数据
+
+  ```python
+  import pymysql
+  
+  id = '20120001'
+  user = 'bob'
+  age = 20
+  
+  db = pymysql.connect(host='localhost', user='root', password='', port=3306, db='spiders')
+  cursor = db.cursor()
+  # 使用构造SQL语句：sql = 'INSERT INTO student(id,name,age) values(' + id + ', ' + name + ', ' + age + ')'
+  # 使用格式化符%s实现，可以避免字符串拼接的麻烦，又可以避免引号冲突的问题
+  sql = 'INSERT INTO students(id,name,age) values(%s,%s,%s)'
+  try:
+      cursor.execute(sql,(id,user,age))
+      # 需要执行db对象的commit()方法才可实现数据插入，该方法可以将语句提交到数据库执行的方法
+      # 对于数据插入、更新、删除操作，都需要调用该方法才能生效
+      db.commit()
+  except:
+      # 如果执行失败，则调用rollback()执行数据回滚
+      db.rollback()
+  finally:
+      db.close()
+  ```
+
+* 事务的4个属性（ACID）
+
+  |         属性          | 解释                                                         |
+  | :-------------------: | :----------------------------------------------------------- |
+  |  原子性（atomicity）  | 事务是一个不可分割的工作单位，事务中包括的诸操作要么都做，要么都不做 |
+  | 一致性（consistency） | 事务必须使数据库从一个一致性状态变到另一个一致性状态。一致性与原子性是密切相关的 |
+  |  隔离性（isolation）  | 一个事务的执行不能被其他事务干扰，即一个事务内部的操作及使用的数据对并发的其他事务是隔离的，并发执行的各个事务之间不能相互干扰 |
+  | 持久性（durability）  | 持久性也称永久性（permanence），指一个事务一旦提交，它对数据库的改变就应该是永久的。接下来的其他操作或故障不应该对其有任何影响 |
+
+  ```python
+  import pymysql
+  
+  db = pymysql.connect(host='localhost', user='root', password='', port=3306, db='spiders')
+  cursor = db.cursor()
+  # 优化
+  data = {
+      'id':'20120002',
+      'name':'bob',
+      'age':20
+  }
+  table = 'students'
+  keys = ', '.join(data.keys())
+  values = ', '.join(['%s'] * len(data))
+  sql = 'INSERT INTO {table}({keys}) VALUES ({values})'.format(table=table,keys=keys,values=values)
+  try:
+      if cursor.execute(sql,tuple(data.values())):
+          print('successful')
+          db.commit()
+  except:
+      print('failed')
+      db.rollback()
+  finally:
+      db.close()
+  ```
+
+* 更新数据
+
+  ```python
+  import pymysql
+  
+  db = pymysql.connect(host='localhost', user='root', password='', port=3306, db='spiders')
+  cursor = db.cursor()
+  
+  data = {
+      'id':'20120001',
+      'name':'bob',
+      'age':25
+  }
+  
+  table = 'students'
+  keys = ', '.join(data.keys())
+  values = ', '.join(['%s'] * len(data))
+  
+  # ON DUPLICATE KEY UPDATE 如果主键存在，就执行更新操作
+  sql = 'INSERT INTO {table}({keys}) VALUES({values}) ON DUPLICATE KEY UPDATE'.format(table=table,keys=keys,values=values)
+  update = ','.join([" {key} = %s".format(key = key) for key in data])
+  sql += update
+  # 若执行更新操作，则sql语句就是
+  # INSERT INTO students(id, name, age) VALUES(%s, %s, %s) ON DUPLICATE KEY UPDATE id = %s, name = %s, age = %s
+  # 这里就变成了6个%s，所以在后面的excute()方法的第二个参数元组就需要乘以2编程原来的2倍
+  try:
+      print(sql)
+      if cursor.execute(sql,tuple(data.values()) * 2):
+          print('successful')
+          db.commit()
+  except:
+      print('failed')
+      db.rollback()
+  finally:
+      db.close()
+  ```
+
+* 删除数据
+
+  ```python
+  table = 'students'
+  condition = 'age > 20'
+  
+  # 因为删除条件有多种多样，所以不再继续构造复杂的判断性。这里之间将条件当做字符串来传递，以实现删除操作
+  sql = 'DELETE FROM {table} WHERE {condition}'.format(table=table,condition=condition)
+  try:
+      cursor.excute(sql)
+      db.commit()
+  except:
+      db.rollback()
+  finally:
+      db.close
+  ```
+
+* 查询数据
+
+  ```python
+  import pymysql
+  
+  db = pymysql.connect(host='localhost', user='root', password='', port=3306, db='spiders')
+  cursor = db.cursor()
+  
+  sql = 'SELECT * FROM students WHERE age >= 19'
+  try:
+      cursor.execute(sql)
+      print('Count:',cursor.rowcount)
+      # 内部有一个偏移指针用来指向查询结果，最开始偏移指针指向第一条数据，取一次以后，指针指向下一条数	   据，这样再取得话，就会取到下一条数据
+      # one = cursor.fetchone()
+      # print('One:',one)
+      result = cursor.fetchall()
+      print('Result:',result)
+      print('Result Type:',type(result))
+      for row in result:
+          print(row)
+  except:
+      print("Error")
+  finally:
+      db.close()
+      
+  # 结果：
+  Count: 2
+  One: ('20120001', 'bob', 25)
+  Result: (('20120002', 'bob', 20),)
+  Result Type: <class 'tuple'>
+  ('20120002', 'bob', 20)
+  ```
+
+
+### 非关系型存储
+
+> NoSQL，全称Not Only SQL，意为不仅仅是SQL，泛指非关系型数据库。NoSQL是基于键值对的，而且不需要经过SQL层的解析，数据之间没有耦合性，性能非常高。
+
+* 分类
+  * 键值存储数据库：Redis、Voldemort和Oracle BDB等
+  * 列存储数据库：Cassandra、HBase和Riak等
+  * 文档型数据库：CouchDB和MongoDB等
+  * 图形数据库：Neo4J、InfoGrid和Infinite Graph等
+
+#### MongoDB存储
+
+* 连接MongoDB
+
+#### Redis存储
 
 ## 六、Ajax数据爬取
 
