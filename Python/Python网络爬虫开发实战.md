@@ -12,7 +12,6 @@
   * 中文教程：
     * 菜鸟教程：http://www.runoob.com/python3/python3-tutorial.html
     * 廖雪峰Python3教程：[点击这里](https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000)
-  * 中文教程：
 
 ### 1.2 请求库的安装
 
@@ -69,11 +68,34 @@
 
 #### lxml的安装
 
-#### Beautiful Soup的安装
+* 相关链接
+  * 官方网站：https://lxml.de/
+  * GitHub：https://github.com/lxml/lxml
+  * PyPI：https://pypi.org/project/lxml/
+
+#### Beautiful Soup4的安装
+
+* 相关链接
+  * 官方网站：https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+  * 中文文档：https://www.crummy.com/software/BeautifulSoup/bs4/doc.zh/
+  * PyPI：https://pypi.org/project/beautifulsoup4/
 
 #### pyquery的安装
 
+- 相关链接
+  - 官方网站：https://pythonhosted.org/pyquery/
+  - GitHub：https://github.com/gawel/pyquery/
+  - PyPI：https://pypi.org/project/pyquery/
+
 #### tesserocr的安装
+
+- 相关链接
+  - tesserocr GitHub：https://github.com/tesseract-ocr/tesseract
+  - tesserocr PyPI：https://pypi.org/project/tesserocr/
+  - tesseract 下载地址：https://github.com/tesseract-ocr/tesseract/wiki
+  - tesseract GitHub：https://github.com/tesseract-ocr/tesseract
+  - tesseract语言包：https://github.com/tesseract-ocr/tessdata
+  - tesseract文档：https://github.com/tesseract-ocr/tesseract/wiki/Documentation
 
 ### 1.4 数据库的安装
 
@@ -85,28 +107,55 @@
 
 ### 1.5 存储库的安装
 
-- PyMySQL的安装
-- PyMongo的安装
-- redis-py的安装
-- RedisDump的安装
+#### PyMySQL的安装
+
+#### PyMongo的安装
+
+#### redis-py的安装
+
+#### RedisDump的安装
 
 ### 1.6 Web库的安装
 
-* Flask的安装
-* Tornado的安装
+#### Flask的安装
+
+#### Tornado的安装
 
 ### 1.7 App爬取相关的库安装
 
-* Charles的安装
-* mitmproxy的安装
+#### Charles的安装
+
+#### mitmproxy的安装
 
 ### 1.8 爬虫框架的安装
 
+#### pyspider的安装
+
+#### Scrapy的安装
+
+#### Scrapy-Splash的安装
+
+#### Scrapy-Redis的安装
+
 ### 1.9 部署库相关的库的安装
+
+#### Docker的安装
+
+#### Scrapyd的安装
+
+#### Scrapyd-Client的安装
+
+#### Scrapyd API的安装
+
+#### Scrapyrt的安装
+
+#### Gerapy的安装
 
 ## 二、爬虫基础
 
 ### 2.1 HTTP基本原理
+
+> **请求**网站并**提取**数据的**自动化**程序
 
 * URI和URL
   * URI全称Uniform Resource Identifier，即统一资源标志符
@@ -230,14 +279,20 @@
 * 网页的结构
 
   ```html
+  <!-- 定义文档类型 -->
   <!DOCTYPE HTML>
   <html>
+      <!-- head标签内定义了一些页面的配置和引用 -->
       <head>
+          <!-- 指定网页编码为utf-8 -->
           <meta charset="utf-8">
+          <!-- 网页的标题 -->
           <title>This is a Demo</title>
       </head>
       <body>
+          <!-- div标签定义了网页中的区块，id是container，id的内容在网页中是唯一的 -->
           <div id="container">
+              <!-- class所谓wrapper -->
           	<div class="wrapper">
                   <h2>
                       Hello World
@@ -251,29 +306,126 @@
   </html>
   ```
 
-* 节点树及节点间的关系
+* 节点树及节点间的关系：在HTML中，所有标签定义的内容都是节点，它们构成了HTML DOM树
 
+  > DOM(Document Object Model)文档对象模型。它定义了访问HTML和XML文档的标准
 
+  * W3C DOM标准被分为3个不同的部分
+
+    1. 核心DOM：针对任何结构化文档的标准模型
+    2. XML DOM：针对XML文档的标准模型
+    3. HTML DOM：针对HTML文档的标准模型
+
+  * 根据W3C的HTML DOM标准，HTML文档中的所有内容都是节点
+
+    * 整个文档是一个文档节点
+    * 每个HTML元素是元素节点
+    * HTML元素内的文本是文本节点
+    * 每个HTML属性都是属性节点
+    * 注释是注释节点
+
+  * 节点树
+
+    ![img](https://ws1.sinaimg.cn/large/006tKfTcly1ftnbc6u3r1j30di078mxt.jpg)
+
+  * 节点树及节点之间的关系
+
+    ![img](https://ws3.sinaimg.cn/large/006tKfTcly1ftnbdr0yg5j30au078aaf.jpg)
+
+* CSS选择器的语法规则
+
+  ![img](https://ws4.sinaimg.cn/large/006tKfTcly1ftnbi5yxaaj30le04c0tf.jpg)
+
+  ![img](https://ws1.sinaimg.cn/large/006tKfTcly1ftnbjot2cdj30ld0n80y2.jpg)
+
+  ![img](https://ws4.sinaimg.cn/large/006tKfTcly1ftnblw5mb1j30lq02wgm4.jpg)
 
 ### 2.3 爬虫的基本原理
 
 * 爬虫概述：爬虫就是获取网页并提取和保存信息的自动化程序。
-  1. 获取网页
-  2. 提取信息
-  3. 保存数据
-  4. 自动化程序
+  1. 获取网页：获取网页的源代码，并从源代码中提取想要的信息
+  2. 提取信息：分析网页源代码，从中提取我们想要的数据。
+     * 正则表达式提取，这是一个万能的方法，但是在构造时比较复杂且易出错。
+     * 根据网页节点属性、CSS选择器或XPath来提取网页信息的库：如Beautiful Soup、pyquery、lxml。
+  3. 保存数据：可以简单保存为文本或JSON文本，也可以保存到数据库，如MySQL和MongoDB等，也可以保存至远程服务器。
+  4. 自动化程序：爬虫可以替代我们来完成爬取工作的自动化程序，他可以在爬取过程中进行各种异常处理、错误重试等操作，以确保爬取持续高效地运行。
+
 * 能抓怎样的数据：HTML源代码、二进制数据、JSON字符串等，只要在浏览器里面可以访问得到，就可以将其抓取下来。
+
 * JavaScript渲染页面
 
+  网页越来越多地采用Ajax、前端模块化工具来构建，整个网页可能都是由JavaScript渲染出来的，原始的HTML代码就是一个空壳。使用urlib或requests请求当前页面时，我们只能得到这个HTML代码，它不会帮助我们去继续加载这个JavaScript文件。
 
+  * 解决方法
+    * 分析Ajax接口
+    * 使用Selenium、Splash等库实现模拟JavaScript渲染
 
 ### 2.4 会话和Cookies
 
+#### 无状态HTTP
 
+HTTP协议对事务处理是没有记忆能力的，即服务器不知道客户端是什么状态。当我们向服务器发送请求后，服务器解析请求，然后返回对应的响应，服务器负责完成这个过程，该过程是完全独立的，服务器不会记录前后状态的变化，缺少状态记录。若后续需要处理前面的信息，则必须重传，这导致需要额外传递一些前面的重复请求，才能获取后续响应。
+
+会话和Cookies可以保持HTTP连接的状态，会话在服务端，Cookies在客户端。浏览器在下次访问网页时会自动附带上Cookies发送给服务器，服务器通过识别Cookies并鉴定出是哪个用户，然后再判断用户是否是登录状态，然后返回对应的响应。
+
+* 会话：在Web中，会话对象用来存储特定用户会话所需的属性及配置信息。当用户在应用程序的Web也之间跳转存储在会话对象中的变量将不会丢失，而是在用户会话中一直存在下去。当用户请求来自应用程序的Web页时，如果该用户还没有会话，则Web服务器自动创建一个会话对象。当会话过期或被放弃后，服务器将终止该会话。
+* Cookies：Cookies指某些网站为了辨别用户身份、进行会话跟踪而存储在用户本地端上的数据。
+  * 会话维持
+  * 属性结构
+    * Name：Cookies的名称，一旦创建不可更改
+    * Value：该Cookies的值。如果值为Unicode字符，需要为字符编码。如果为二进制数据，则需要用BASE64编码
+    * Domain：可以访问该Cookie的域名
+    * Max Age：Cookie失效的时间，单位为秒，若为正数，则Cookie在Max Age秒之后失效。若为负数，关闭浏览器即失效。
+    * Path：该Cookie的使用路径。若设置为/，则本域名下所有页面都可以访问该Cookie
+    * Size：Cookie的大小
+    * HTTP：Cookie的httponly属性。若为True，则只有在HTTP头中带有此Cookie的信息，而不能通过document.cookie来访问此Cookie
+    * Secure：该Cookie是否仅被使用安全协议传输。安全协议有HTTPS和SSL等，在网络上传输数据之间先将数据加密。默认为false
+* 常见误区
+  * 除非程序通知服务器删除一个会话，否则服务器会一直保留。
+  * 关闭浏览器不会导致会话被删除，这就需要服务器为会话设置一个失效时间，当距离客户端上一次使用会话的时间超过这个失效时间时，服务器就可以认为客户端已停止活动，然后才会将会话删除。
 
 ### 2.5 代理的基本原理
 
+#### 基本原理
 
+代理实际上是指代理服务器，英文叫作proxy server，他的功能是代理网络用户去取得网络信息。形象地说，它是网络信息的中转站。如果设置了代理服务器，本机不是直接向Web服务器发起请求，而是向代理服务器发出请求，请求会发送给代理服务器，然后代理服务器再发送给Web服务器，接着由代理服务器再把Web服务器返回的响应转发给本机。
+
+* 作用
+
+  * 突破IP访问限制，访问一些平时不能访问的站点
+  * 访问一些单位或团体内部资源：比如使用教育网内地址段免费代理服务器，就可以对教育网开放的各类FTP下载上传，以及各类资料查询共享等服务
+  * 提高访问速度：通常代理服务器都设置一个较大的硬盘缓冲区，当有外接的信息通过时，同时也将其保存在缓冲区中，当其他用户再访问相同的信息时，则直接由缓冲区中取出信息，传给用户，以提高访问速度。
+  * 隐藏真实IP
+
+* 爬虫代理
+
+  对于爬虫来说，由于爬虫爬取速度过快，在爬取过程中可能遇到同一个IP访问过于频繁的问题，此时网站就会让我们输入验证码登录后者直接封锁IP。
+
+  使用代理隐藏真实的IP，让服务器以为是代理服务器在请求自己。这样再爬取过程中通过不断更换代理，就不会被封锁。
+
+* 代理分类
+
+  * 根据协议
+    * FTP代理服务器：主要用于访问FTP服务器，一般有上传、下载及缓存功能，端口一般为21、2121等
+    * HTTP代理服务器：主要用于访问网页，一般有内容过滤和缓存功能，端口一般为80、8080、3128
+    * SSL/TLS代理：主要用于访问加密网站，一般有SSL或TLS加密功能（最高支持128位加密强度），端口一般为443
+    * RTSP代理：主要用于访问Real流媒体服务器，一般有缓存功能，端口一般为554
+    * Telnet代理：主要用于telnet远程控制（黑客入侵计算机时常用语隐藏身份），端口一般为23
+    * POP3/SMTP代理：主要用户POP3/SMTP方式收发邮件，一般有缓存功能，端口一般为110/25
+    * SOCKS代理：单纯传递数据包，速度快，一般有缓存功能，端口一般为1080
+      * SOCKS4：只支持TCP
+      * SOCKS5：支持TCP和UDP，还支持各种身份验证机制、服务器域名解析等
+  * 根据匿名程度
+    * 高度匿名代理：数据包原封不动地转发
+    * 普通匿名代理：会在数据包上做一些改动，服务端有可能发现这个是代理服务器，也有一定几率追查到真实IP。代理服务器通常会加入的HTTP头有HTTP_VIA和HTTP_X_FORWARDED_FOR
+    * 透明代理：不但改动数据包，还有告诉服务器客户端的真实IP。这种代理除了能用缓存技术提高浏览速度，能将内容过滤提高安全性之外，并无其他显著作用，最常见的例子是内网中的硬件防火墙
+    * 间谍代理：指组织或个人创建的用于记录用户传输的数据，然后进行研究、监控等目的的代理服务器
+
+* 常见代理设置
+
+  * 使用网上的免费代理
+  * 使用付费代理服务
+  * ADSL拨号
 
 ## 三、基本库的使用
 
@@ -799,11 +951,251 @@ with open('data.csv','w',encoding='utf-8') as csvfile:
 
 #### MongoDB存储
 
-* 连接MongoDB
+* 连接MongoDB，连接数据库并插入、查询数据
+
+  ```python
+  import pymongo
+  from pymongo import MongoClient
+  
+  # 连接数据库
+  client = MongoClient('mongodb://localhost:27017/')
+  # client = pymongo.MongoClient(host='localhost',prot=27017)
+  
+  # 指定数据库，两种方式等价
+  # db = client.test
+  db = client['test']
+  
+  # 指定集合
+  # collection = db.student
+  collection = db['student']
+  
+  # 插入数据
+  student = {
+      'id':'20170101',
+      'name':'jordan',
+      'age':20,
+      'gender':'male'
+  }
+  
+  student1 = {
+      'id':'20170102',
+      'name':'mike',
+      'age':20,
+      'gender':'male'
+  }
+  
+  student2 = {
+      'id':'20170103',
+      'name':'du',
+      'age':20,
+      'gender':'male'
+  }
+  
+  # 插入一条数据并返回_id值
+  # result = collection.insert_one(student)
+  # print(result.inserted_id)
+  
+  # 插入多条数据
+  # result = collection.insert_many([student1,student2])
+  # print(result.inserted_ids)
+  
+  # 查询数据 利用find_one()或find()方法进行查询
+  result = collection.find_one({'name':'mike'})
+  print(type(result))
+  print(result)
+  
+  results = collection.find({'age':20})
+  print(results)
+  for r in results:
+      print(r)
+  
+  # 查询年龄大于20的数据
+  results = collection.find({'age':{'$gt':19}})
+  print(results)
+  for r in results:
+      print(r)
+  ```
+
+* 查询符号表
+
+  ![img](https://ws4.sinaimg.cn/large/006tNc79ly1fteyfoplygj30ml06ngmq.jpg)
+
+  ![img](https://ws2.sinaimg.cn/large/006tNc79ly1fteyjn2frlj30ml06eq4b.jpg)
+
+* 计数
+
+  ```python
+  count = collection.find().count()
+  print(count)
+  
+  count = collection.find({'age':20}).count()
+  print(count)
+  ```
+
+* 排序
+
+  ```python
+  # 升序：pymongo.ASCENDING 降序：pymongo.DESCENDING
+  results = collection.find.sort('name',pymongo.ASCENDING)
+  print([result['name'] for result in results])
+  ```
+
+* 偏移
+
+  ```python
+  # 忽略前两个元素
+  results = collection.find().sort('name',pymongo.ASCENDING).skip(2)
+  print([result['name'] for result in results])
+  
+  # 忽略前两个元素并只取2个元素结果
+  results = collection.find().sort('name',pymongo.ASCENDING).skip(2).limit(2)
+  print([result['name'] for result in results])
+  ```
+
+* 更新
+
+  ```python
+  # 更新数据
+  condition = {'name':'du'}
+  student = collection.find_one(condition)
+  student['age'] = 25
+  # 建议使用update_one或update_many
+  # result = collection.update(condition,student)
+  # 也可以使用$set操作符对数据进行更新，这样可以只更新student字典内存在的字段，如果原先还有其他字段，则不会更新也不会删除。
+  # result = collection.update(condition,{'$set':student})
+  print(result)
+  
+  condition = {'name':'mike'}
+  student = collection.find_one(condition)
+  student['age'] = 26
+  result = collection.update_one(condition,{'$set':student})
+  print(result)
+  print(result.matched_count,result.modified_count)
+  
+  condition = {'age':{'$gt':20}}
+  # 第一条符合条件的年龄+1
+  # result = collection.update_one(condition,{'$inc':{'age':1}})
+  result = collection.update_many(condition,{'$inc':{'age':1}})
+  print(result)
+  print(result.matched_count,result.modified_count)
+  ```
+
+* 删除
+
+  ```python
+  # 删除
+  result = collection.delete_one({'name':'mike'})
+  print(result)
+  print(result.deleted_count)
+  result = collection.delete_many({'age':20})
+  print(result)
+  print(result.deleted_count)
+  ```
+
+* 其他方法
+
+  * find_one_and_delete()、finde_one_and_replace()和find_one_and_update()等
+  * create_index()、create_indexes()和drop_index()等
+  * 操作指南：https://docs.mongodb.com/guides/
+  * PyMongo官方文档：http://api.mongodb.com/python/current/api/pymongo/collection.html
 
 #### Redis存储
 
+> Redis是一个基于内存的高效的键值型非关系型数据库，存取效率极高，而且支持多种存储数据结构，使用简单。
+
+* 启动redis服务端
+
+  ```bash
+  # 启动redis数据库服务端
+  redis-server
+  # 使用密码启动redis客户端
+  redis-cli -a 1234
+  ```
+
+* Redis和StrictRedis
+
+  redis-py库提供两个类Redis和StrictRedis来实现Redis的命令操作（官方推荐使用StrictRedis）
+
+* 连接Redis
+
+  ```python
+  from redis import StrictRedis,ConnectionPool
+  
+  # 使用ConnectionPool连接
+  pool = ConnectionPool(host='localhost',port=6379,db=0,password='1234')
+  
+  ''''
+  # ConnectionPool还支持通过URL来构建
+  # Redis TCP连接
+  redis://[:passwrod]@host:port/db
+  
+  # Redis TCP+SSL连接
+  rediss://[:passwrod]@host:port/db
+  
+  # Reids UNIX socket连接
+  unix://[:password]@path/to/socket.sock?db=db
+  
+  url = 'redis://:1234@localhost:6379/0'
+  pool = ConnectionPoo;.from_url(url)
+  redis = StrictRedis(connection_pool=pool)
+  '''
+  # redis = StrictRedis(host='localhost',port=6379,db=0,password='1234')
+  
+  redis = StrictRedis(connection_pool=pool)
+  redis.set('name','duzhida')
+  print(redis.get('name'))
+  ```
+
+  
+
 ## 六、Ajax数据爬取
+
+### 什么是Ajax
+
+> Ajax全称为Asynchronous JavaScript and XML，即异步的JavaScript和XML。它不是一门编程语言，而是利用JavaScript在保证页面不被刷新，页面链接不改变的情况下与服务器交换数据并更新部分网页的的技术。
+
+#### 基本原理
+
+* 发送Ajax请求到网页更新的过程分为以下3步：
+
+  1. 发送请求
+  2. 解析内容
+  3. 渲染网页
+
+* 发送请求
+
+  ```javascript
+  // 这个JavaScript对Ajax最底层的实现，实际上就是新建了XMLHttpReequest对象，然后调用onreadystatechange属性设置了监听，然后调用open()和send()方法向某个链接(服务器)发送请求
+  var xmlhttp;
+  if(window.XMLHttpRequest){
+      //code for IE7+,Firfox,Chrome,Opera,Safari
+      xmlhttp = new XMLHttpRequest();
+  }else{
+      //code for IE6,IE5
+      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+  }
+  
+  xmlhttp.onreadystatechange=function(){
+      if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
+          document.getElementById("myDiv").innerHTML = xmlhttp.responseText;
+      }
+  }
+  xmlhttp.open("POST","/ajax/",true);
+  xmlhttp.send()
+  ```
+
+* 解析内容
+
+  得到相应之后，onreadystatechange属性对应的方法就会触发，此时利用xmlhttp的responseText属性便可取到响应内容。返回的内容可能是HTML，可能是JSON，接下来只需要在方法中用JavaScript进一步处理即可。
+
+* 渲染网页
+
+  JavaScript有改变网页内容的能力，解析完响应内容之后，就可以调用JavaScript来针对解析完的内容对网页进行下一步处理。比如，通过document。getElementById().innerHTML就可以对元素内的源代码进行更改。这样网页显示的内容就改变了，这样的操作也被称为DOM操作。
+
+### Ajax分析方法
+
+1. 查看请求
+2. 过滤请求
 
 ## 七、动态渲染页面爬取
 
@@ -820,6 +1212,22 @@ with open('data.csv','w',encoding='utf-8') as csvfile:
 ## 十一、APP的爬取
 
 ## 十二、 pyspider框架的使用
+
+* 相关链接
+  * GItHub地址：https://github.com/binux/pyspider
+  * 官方文档：http://docs.pyspider.org/en/latest/
+* 基本功能
+  * 提供方便易用的WebUI系统，可视化编写和调试爬虫
+  * 提供爬取进度监控、爬取结果查看、爬虫项目管理等功能
+  * 支持多种后端数据库，如MySQL、MongoDB、Redis、SQLite、Elasticsearch、PostgreSQL
+  * 支持多种消息队列，如RabbitMQ、Beanstalk、Redis、Kombu
+  * 提供优先级控制、失败重试、定时抓取等功能
+  * 对接了PhantomJS，可以爬取JavaScript渲染的页面
+  * 支持单机和分布式部署，支持Docker部署
+* 与Scrapy比较
+* 架构
+* 基本使用
+  * 目标：爬去去哪儿网的旅游攻略，链接为http://travel.qunar.com/travelbook/list.htm
 
 ## 十三、Scrapy框架的使用
 

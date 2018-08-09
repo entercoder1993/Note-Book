@@ -26,7 +26,7 @@
 
 
 
-      
+​      
 ## 安装Git
 * Linux上安装
 
@@ -215,7 +215,7 @@ git clone [url]
 
 * 新建并切换分支
 
-    ```
+    ```bash
     $ git branch bran-name
     $ git checkout bran-name
     //简写

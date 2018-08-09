@@ -15,4 +15,4 @@
 
 > [Pro Git](https://github.com/entercoder1993/Note-Book/blob/master/Tools/Note-of-Pro-Git.md)
 
-有任何问题欢迎联系我：entercoder1993@gmail.comⅠ
+有任何问题欢迎联系我：entercoder1993@gmail.com
