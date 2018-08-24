@@ -1,7 +1,7 @@
 # Reading & Video Notes
-|       Ⅰ        |       Ⅱ       |  Ⅲ   |  Ⅳ   |  Ⅴ   |  Ⅵ   |  Ⅶ   |  Ⅷ   |  Ⅸ   |          Ⅹ          |
-| :------------: | :-----------: | :--: | :--: | :--: | :--: | :--: | :--: | :--: | :-----------------: |
-| Python :snake: | 工具 :hammer: |      |      |      |      |      |      |      | Questions:question: |
+|       Ⅰ        |       Ⅱ       |  Ⅲ   |  Ⅳ   |  Ⅴ   |  Ⅵ   |  Ⅶ   |  Ⅷ   |   Ⅸ   |          Ⅹ          |
+| :------------: | :-----------: | :--: | :--: | :--: | :--: | :--: | :--: | :---: | :-----------------: |
+| Python :snake: | 工具 :hammer: |      |      |      |      |      |      | Other | Questions:question: |
 
 
 
@@ -14,5 +14,11 @@
 ## Tool
 
 > [Pro Git](https://github.com/entercoder1993/Note-Book/blob/master/Tools/Note-of-Pro-Git.md)
+>
+> [Dcoker入门]()
+
+### Other
+
+> [macOS设置及美化]()
 
 有任何问题欢迎联系我：entercoder1993@gmail.com
