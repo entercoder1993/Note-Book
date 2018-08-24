@@ -141,23 +141,7 @@
 
 #### Docker的安装
 
-* 安装
-
-  ```bash
-  $ brew cask install docker
-  ```
-
 #### Scrapyd的安装
-
-* 安装
-
-  ```bash
-  $ pip3 install scrapyd
-  ```
-
-* 配置
-
-  * 新建配置文件/etc/scrapyd/scrapyd.conf
 
 #### Scrapyd-Client的安装
 
@@ -445,530 +429,6 @@ HTTP协议对事务处理是没有记忆能力的，即服务器不知道客户�
 
 ## 三、基本库的使用
 
-### 3.1 使用urllib
-
-> [官方文档](https://docs.python.org/3/library/urllib.html)
-
-* 四个模块
-
-  * request：最基本的HTTP请求模块，用来模拟发送请求
-  * error：异常处理模块，若出现请求错误，可以捕获这些异常，然后进行重试或其他操作保证程序不会意外终止
-  * parse：工具模块，提供URL处理方法，比如拆分、解析、合并等
-  * robotparser：识别网站的robots.txt文件
-
-* 发送请求
-
-  * urlopen()
-
-    urllib.request.urlopen(url,data=None,[timeout,]*,cafile=None,capath=None,cadefault=False,context=None)
-
-    ```python
-    import urllib.request
-    
-    response = urllib.request.urlopen('https://www.python.org')
-    print(response.read().decode('utf-8'))
-    
-    # 输出为HTTPResponse类型对象，主要包含read()、readinto()、getheader(name)、getheaders()、fileno()等方法
-    # msg、version、status、reason、debuglevel、closed属性等
-    print(type(response))
-    print(response.status)
-    print(response.getheaders())
-    print(response.getheader('Server'))
-    ```
-
-    * data参数
-    * timeout参数
-    * 其他参数
-
-  * Request
-
-  * 高级用法
-
-* 处理异常
-
-  * URLError
-  * HTTPError
-
-* 解析链接
-
-* 分析Robots协议
-
-### 3.2 使用requests
-
-* 安装
-
-  ```bash
-  pip3 install requests
-  ```
-
-* 实例
-
-  ```python
-  import  requests
-  
-  r = requests.get('https://www.baidu.com')
-  r.encoding = r.apparent_encoding
-  print(type(r))
-  print(r.status_code)
-  print(type(r.text))
-  print(r.text)
-  print(r.cookies)
-  
-  r= requests.post('http://httpbin.org/post')
-  r= requests.put('http://httpbin.org/put')
-  r= requests.delete('http://httpbin.org/delete')
-  r= requests.head('http://httpbin.org/get')
-  r= requests.options('http://httpbin.org/get')
-  ```
-
-* GET请求
-
-  ```python
-  import requests
-  
-  r = requests.get('http://www.httpbin.org/get')
-  print(r.text)
-  
-  # 添加参数
-  data = {
-      'name':'germey',
-      'age':22
-  }
-  r = requests.get('http://httpbin.org/get',params=data)
-  print(r.text)
-  
-  # 直接解析返回结果，可以得到一个字典格式的结果
-  print(r.json())
-  print(type(r.json()))
-  ```
-
-  * 抓取知乎发现页标题
-
-    ```python
-    import requests
-    import re
-    
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36'
-    }
-    r = requests.get('https://www.zhihu.com/explore',headers=headers)
-    pattern = re.compile('explore-feed.*?question_link.*?>(.*?)</a>',re.S)
-    titles = re.findall(pattern,r.text)
-    print(titles)
-    ```
-
-  * 抓取二进制数据
-
-    ```python
-    import requests
-    
-    r = requests.get('http://github.com/favicon')
-    print(r.content)
-    with open('pic.jpg','wb') as f:
-        f.write(r.content)
-    ```
-
-* POST请求
-
-  ```python
-  import requests
-  
-  data = {'name':'germey','age':22}
-  # 提交数据到form，说明POST请求成功
-  r = requests.post('http://httpbin.org/post',data=data)
-  print(r.text)
-  ```
-
-* 响应
-
-  ```python
-  import requests
-  
-  headers = {
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36'
-  }
-  r = requests.get('http://www.jianshu.com',headers=headers)
-  print(type(r.status_code),r.status_code)
-  # headers属性得到的结果CaseInsensitiveDict
-  print(type(r.headers),r.headers)
-  # cookies属性得到的结果RequestsCookieJar
-  print(type(r.cookies),r.cookies)
-  print(type(r.url),r.url)
-  print(type(r.history),r.history)
-  
-  # 内置的状态码查询对象requests.codes
-  exit() if not r.status_code == requests.codes.ok else print('successs')
-  
-  # print('fault') if r.status_code == requests.codes.not_found else exit()
-  ```
-
-* 高级用法
-
-  * 文件上传
-
-    ```python
-    import requests
-    
-    files = {'file':open('favicon.icon','rb')}
-    r = requests.post('http://httpbin.org/post',files=files)
-    print(r.text)
-    print(r.status_code)
-    ```
-
-  * Cookies设置
-
-    ```python
-    import requests
-    
-    r = requests.get('https://www.baidu.com')
-    print(r.cookies)
-    
-    for key,value in r.cookies.items():
-        print(key + '=' + value)
-        
-        
-    # 利用Cookies维持登录状态
-    import requests
-    
-    headers = {
-        'Cookie':'......',
-        'Host':'www.zhihu.com',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36'
-    
-    }
-    r = requests.get('https://www.zhihu.com',headers=headers)
-    print(r.text)
-    ```
-
-  * 会话维持
-
-    使用Session对象维持会话，可以做到模拟同一个会话二不用担心Cookies的问题。通常用于模拟登录成功后再进行下一步的操作。
-
-    ```python
-    import requests
-    
-    s = requests.Session()
-    s.get('http://httpbin.org/cookies/set/number/123456789')
-    r = s.get('http://httpbin.org/cookies')
-    print(r.text)
-    ```
-
-  * SSL证书验证
-
-    ```python
-    import requests
-    import logging
-    # from requests.packages import urllib3
-    # 忽略警告
-    # urllib3.disable_warnings()
-    # 捕获警告到日志
-    logging.captureWarnings(True)
-    r = requests.get('https://www.12306.cn',verify=False)
-    # 或指定本地证书用作客户端证书
-    # ...
-    print(r.status_code)
-    ```
-
-  * 代理设置
-
-    ```python
-    import requests
-    
-    #proxies = {
-    #    'http':'http://10.10.1.10:3128',
-    #    'https':'http://10.10.1.10:1080'
-    #}
-    proxies = {
-        'http':'http://user:password@10.10.1.10:3128/',
-    }
-    requests.get('https://www.taobao.com',proxies=proxies)
-    ```
-
-  * 超时设置
-
-    ```python
-    import requests
-    
-    # timeout=None则为永久等待，或直接不加参数
-    r = requests.get('https://www.taobao.com',timeout = 1)
-    print(r.status_code)
-    ```
-
-  * 身份认证
-
-    ```python
-    import requests
-    
-    r = requests.get('http:localhost:5000',auth=('username','password'))
-    print(r.status_code)
-    ```
-
-* Prepared Requests
-
-  在requests中将请求表示为数据结构，这个数据结构就叫Prepared Requests
-
-  ```python
-  from requests import Request,Session
-  
-  url = 'http://httpbin.org/post'
-  data = {
-      'name':'germey'
-  }
-  headers = {
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36'
-  }
-  s = Session()
-  req = Request('POST',url,data=data,headers=headers)
-  prepped = s.prepare_request(req)
-  r = s.send(prepped)
-  print(r.text)
-  ```
-
-
-### 3.3 正则表达式
-
-* 常用匹配规则
-
-  | 模式   | 描述                                                         |
-  | ------ | ------------------------------------------------------------ |
-  | \w     | 匹配字母、数字及下划线                                       |
-  | \W     | 匹配不是字母、数字及下划线的字符                             |
-  | \s     | 匹配任意空白字符，等价于[\t\n\r\f]                           |
-  | \S     | 匹配任意非空字符                                             |
-  | \d     | 匹配任意数字，等价于[0-9]                                    |
-  | \D     | 匹配任意非数字字符                                           |
-  | \A     | 匹配字符串开头                                               |
-  | \Z     | 匹配字符串结尾，若存在换行，只匹配到换行前的结束字符串       |
-  | \z     | 匹配字符串结尾，若存在换行，同时还会匹配换行符               |
-  | \G     | 匹配最后匹配完成的位置                                       |
-  | \n     | 匹配一个换行符                                               |
-  | \t     | 匹配一个制表符                                               |
-  | ^      | 匹配一行字符串的开头                                         |
-  | $      | 匹配一行字符串的结尾                                         |
-  | .      | 匹配任意字符，除了换行符，当re.DOTALL标记被指定时，则可以匹配包括换行符的任意字符 |
-  | [...]  | 用来表示一组字符串，单独列出，比如[amk]匹配a、m或k           |
-  | [^...] | 不在[]中的字符，比如\[^abc]匹配除了a、b、c之外的字符         |
-  | *      | 匹配0个或多个表达式                                          |
-  | +      | 匹配1个或多个表达式                                          |
-  | ?      | 匹配0个或1个前面的正则表达式定义的片段，非贪婪方式           |
-  | {n}    | 精确匹配n个前面的正则表达式                                  |
-  | {n,m}  | 匹配n到m次由前面正则表达式定义的片段，贪婪方式               |
-  | a\|b   | 匹配a或b                                                     |
-  | ()     | 匹配括号内的表达式，页表示一个组                             |
-
-* match()
-
-  match()会从字符串的起始位置匹配正则表达式，如果匹配，返回匹配成功的结果；若不匹配，则返回None
-
-  ```python
-  import re
-  
-  content = 'Hello 123 4567 World_This is a Regex Demo'
-  print(len(content))
-  
-  result = re.match('^Hello\s\d\d\d\s\d{4}\s\w{10}',content)
-  print(result)
-  # group()可以输出匹配到的内容
-  print(result.group())
-  # span()输出匹配结果在原字符串中的的位置范围，
-  print(result.span())
-  ```
-
-  * 匹配目标
-
-    可以使用括号()将想要提取的子字符串括起来。()实际上标记了一个表达式的开始和结束位置，被标记的每个子表达式会依次对应每一个分组，调用group()方法传入分组的索引即可获取提取的结果	
-
-    ```python
-    import re
-    
-    result = re.match('^Hello\s(.*?)\sWorld',content)
-    print(result)
-    print(result.group())
-    print(result.group(1))
-    print(result.span())
-    ```
-
-  * 通用匹配
-
-    ```python
-    import re
-    
-    # .*可以匹配任意字符
-    result = re.match('^Hello.*Demo$',content)
-    print(result)
-    print(result.group())
-    print(result.span())
-    ```
-
-  * 贪婪与非贪婪
-
-    ```python
-    import re
-    
-    # 运行结果只得到7，在贪婪匹配中，.*会匹配尽可能多的字符，\d+代表至少一个数字，
-    # 所以.*尽可能的匹配多的字符，因此只留下一个可满足条件的数字7
-    result = re.match('^He.*(\d+).*Demo$',content)
-    print(result)
-    print(result.group(1))
-    
-    # .*?是非贪婪匹配，就是尽可能匹配少的字符
-    result = re.match('^He.*?(\d+).*Demo$',content)
-    print(result)
-    print(result.group(1))
-    
-    content = 'http://weibo.com/comment/kEraCN'
-    result1 = re.match('http.*?comment/(.*?)',comment)
-    result2 = re.match('http.*?comment/(.*)',comment)
-    print('result1',result1.group(1))
-    print('result2',result1.group(2))
-    # 运行结果为
-    # result1
-    # result2 kEraCN
-    # .*?没有匹配到任何结果，.*尽量匹配多的内容，因此成功匹配
-    ```
-
-  * 修饰符
-
-    ```python
-    import re
-    
-    content = ''''Hello 1234567 World_This 
-    is a Regex Demo'''
-    # 运行报错，因为这个正则表达式无法匹配到换行符，所以返回结果None
-    # result = re.match('^He.*?(\d+).*?Demo$',content)
-    # print((result.group(1)))
-    # 添加re.S即可修正此错误，这个修饰符可以匹配包括换行符在内的所有字符
-    result = re.match('^He.*?(\d+).*?Demo$',content，re.S)
-    print((result.group(1)))
-    ```
-
-    | 修饰符 | 描述                                                       |
-    | ------ | ---------------------------------------------------------- |
-    | re.I   | 使匹配对大小写不敏感                                       |
-    | re.L   | 做本地化识别匹配                                           |
-    | re.M   | 多行匹配，影响^和$                                         |
-    | re.S   | 使.匹配包括换行在内的所有字符                              |
-    | re.U   | 根据Unicode字符集解析字符。这个标志影响\w、\W、\b、\B      |
-    | re.X   | 该标志通过给予更灵活的格式以便你将正则表达式写得更易于理解 |
-
-  * 转义匹配
-
-    若目标字符串里包含.,，则需要用到转义匹配
-
-    ```python
-    import re
-    
-    content = '(百度)www.baidu.com'
-    result = re.match('\(百度\)www\.baidu\.com',content)
-    print(result)
-    ```
-
-* search()
-
-  match()方法是从字符串的开头开始匹配的，一旦开头不匹配，name整个匹配就失败了。search()在匹配时会扫描整个字符串，然后返回第一个成功匹配的结果。若搜索完成还未找打，则返回None
-
-  ```python
-  import re
-  
-  content = 'Extra stings Hello 1234567 World_This is a Regex Demo Extra stings'
-  result = re.match('Hello.*?(\d+).*?Demo',content)
-  print(result)
-  # None
-  
-  result = re.search('Hello.*?(\d+).*?Demo',content)
-  print(result)
-  ```
-
-  ```python
-  import re
-  
-  html = '''
-      <div id="songs-list">
-          <h2 class="title">经典老歌</h2>
-          <p class="introduction">
-              经典老歌列表
-          </p>
-          <ul id="list" class="list-group">
-              <li data-view="2">一路有你</li>
-              <li data-view="7">
-                  <a>沧海一声笑</a>
-              </li>
-              <li data-view="4" class="active">
-                  <a href="/5.mp3" singer="齐秦">随风往事</a>
-              </li>
-              <li data-view="6">
-                  <a href="/5.mp3" singer="beyond">光辉岁月</a>
-              </li>
-              <li  data-view="5">
-                  <a href="/5.mp3" singer="陈慧琳">记事本</a>
-              </li>
-              <li  data-view="5">
-                  <a href="/.6mp3" singer="邓丽君">但愿人长久</a>
-              </li>
-          </ul>
-      </div>
-  '''
-  
-  result = re.search('<li.*?active.*?singer="(.*?)">(.*?)</a>',html,re.S)
-  print(result.group(1),result.group(2))
-  
-  # 若不加active
-  result = re.search('<li.*?singer="(.*?)">(.*?)</a>',html,re.S)
-  # 则返回匹配的第一条结果
-  ```
-
-* findall()
-
-  findall()会搜索整个字符串，然后返回匹配正则表达式的所有内容，返回的是列表类型
-
-  ```python
-  result = re.findall('<li.*?href="(.*?)".*?singer="(.*?)">(.*?)</a>',html,re.S)
-  print(type(result))
-  for result in result:
-      print(result)
-      
-  # 返回的列表中的每个元素都是元祖类型，用对应的索引一次取出即可。
-  ```
-
-* sub()
-
-  除了使用正则表达式提取信息外，有时候还需要借助它来修改文本。
-
-  ```python
-  import re
-  
-  content = '54aK54yr5oiR54ix5L2g'
-  # 第一个参数\d+用来匹配所有的数字，第二个参数为替换成的字符串，第三个参数为原字符串
-  content = re.sub('\d+','',content)
-  
-  # 上面的HTML文本也可以直接使用正则表达式修改之后再进行提取，就会简单很多了
-  result = re.sub('<a.*?>|</a>','',html)
-  print(result)
-  results = re.findall('<li.*?>(.*?)</li>',result,re.S)
-  for result in  results:
-      print(result.strip())
-  ```
-
-* compile()
-
-  compile()可以将正则字符串编译成正则表达式对象，以便在后面的匹配中复用
-
-  ```python
-  import re
-  
-  content1 = '2016-12-15 12:00'
-  content2 = '2016-12-17 12:55'
-  content3 = '2016-12-22 13:21'
-  # 还可以将修饰符传入，这样在search()、findall()方法中就不需要额外传了
-  pattern = re.compile('\d{2}:\d{2}')
-  result1 = re.sub(pattern,'',content1)
-  result2 = re.sub(pattern,'',content2)
-  result3 = re.sub(pattern,'',content3)
-  print(result1,result2,result3)
-  ```
-
-  
-
 ### 3.4 抓取猫眼电影排行
 
 * 目标：提取出猫眼电影TOP100的电影名称、时间、评分、图片等信息，提取的站点URL为http://maoyan.com/board/4，提取结果 会以文件形式保存下来。
@@ -1100,343 +560,158 @@ if __name__ == '__main__':
 
 ```
 
+
+
+
+
 ## 四、解析库的使用
 
-### 4.1 使用XPath
+### 3.1 使用urllib
 
-* 常用规则
+*   4个主要模块
+    *   request：最基本的HTTP请求模块，可以用来模拟发送请求。
+    *   error：异常处理模块，若果请求出现错误，可以捕获这些一场，然后进行重试或其他操作，保证程序不会意外终止
+    *   parse：一个工具模块，提供了许多URL处理方法，比如拆分、解析、合并等。
+    *   robotparser：识别 网站的robots文件，然后判断哪些网站可以爬取，哪些网站不能爬取
 
-  | 表达式   | 描述                     |
-  | -------- | ------------------------ |
-  | nodename | 选取此节点的所有子节点   |
-  | /        | 从当前节点选取直接子节点 |
-  | //       | 从当前节点选取子孙节点   |
-  | .        | 选取当前节点             |
-  | ..       | 选取当前节点的父节点     |
-  | @        | 选取属性                 |
+*   urlopoen()
 
-  栗子：//title[@lang='eng'] —— 代表选择所有名称为title，同时属性lang的值为eng的节点
-
-* 实例
-
-  ```python
-  from lxml import etree
-  
-  text = '''
-  <div>
-      <ul>
-          <li class="item-0"><a href="link1.html">first item</a></li>
-          <li class="item-1"><a href="link2.html">second item</a></li>
-          <li class="item-inactive"><a href="link3.html">third item</a></li>
-          <li class="item-0"><a href="link4.html">fourth item</a></li>
-          <li class="item-1"><a href="link5.html">fifth item</a></li>
-      </ul>
-  <div>
-  '''
-  
-  html = etree.HTML(text)
-  # tostring输出结果为bytes类型，这里利用decode()方法将其转成str类型
-  result = etree.tostring(html)
-  print(result.decode('utf-8'))
-  ```
-
-* 所有节点
-
-  我们一般会用//开头的XPath规则来选取所有符合要求的节点。
-
-  ```python
-  from lxml import etree
-  
-  html = etree.HTML(text)
-  # 这里的*代表匹配所有节点，即整个HTML文本中的所有节点都会被获取
-  result = html.xpath('//*')
-  print(result)
-  
-  html = etree.HTML(text)
-  # 这里选取所有li节点，直接在//后加上节点名称即可
-  result = html.xpath('//li')
-  print(result)
-  print(result[0])
-  ```
-
-* 子节点
-
-  通过/或//即可查找子节点或子孙节点
-
-  ```python
-  from lxml import etree
-  
-  html = etree.HTML(text)
-  # 选择li节点的所有直接a子节点
-  result = html.xpath('//li/a')
-  print(result[0].text)
-  
-  html = etree.HTML(text)
-  result = html.xpath('//ul//a')
-  print(result)
-  ```
-
-* 父节点
-
-  通过..可以查找父节点
-
-  ```python
-  from lxml import etree
-  
-  html = etree.HTML(text)
-  result = html.xpath('//a[@href="link4.html"]/../@class')
-  print(result)
-  
-  html = etree.HTML(text)
-  # 也可以通过parent::获取父节点
-  result = html.xpath('//a[@href="link4.html"]/parent::*/@class')
-  print(result)
-  ```
-
-* 属性匹配
-
-  可以用@符号进行属性过滤
-
-  ```python
-  from lxml import etree
-  
-  html = etree.HTML(text)
-  result = html.xpath('//li[@class="item-0"]')
-  print(result)
-  ```
-
-* 文本获取
-
-  XPath中的text()方法可以获取节点中的文本
-
-  ```python
-  # 先选取a节点再获取文本
-  html = etree.HTML(text)
-  result = html.xpath('//li[@class="item-0"]/a/text()')
-  print(result)
-  
-  # 使用//
-  html = etree.HTML(text)
-  result = html.xpath('//li[@class="item-0"]//text()')
-  print(result)
-  
-  # 直接用//加text()的方式，可以保证获取到最全面的文本信息，但是可能会夹杂一些换行符等特殊字符
-  # 如果想要获取某些特定子孙节点下的所有文本，可以先选取到特定的子孙节点，再调用text()方法获取其内部文本，这样可以保证获取到的结果是整洁的
-  ```
-
-* 属性获取
-
-  ```python
-  html = etree.HTML(text)
-  result = html.xpath('//li/a/@href')
-  print(result)
-  ```
-
-* 属性多值匹配
-
-  ```python
-  from lxml import etree
-  
-  text = '''
-  <li class="li li-first"><a href="link.html">first item</a></li>
-  '''
-  html = etree.HTML(text)
-  result = html.xpath('//li[contains(@class,"li")]/a/text()')
-  print(result)
-  ```
-
-* 多属性匹配
-
-  需要同时匹配多个属性，可以使用运算符and来连接
-
-  ```python
-  from lxml import etree
-  
-  text = '''
-  <li class="li li-first" name="item"><a href="link.html">first item</a></li>
-  '''
-  
-  html = etree.HTML(text)
-  result = html.xpath('//li[contains(@class,"li") and @name="item"]/a/text()')
-  print(result)
-  ```
-
-  | 运算符 | 描述           | 实例               | 返回值                           |
-  | ------ | -------------- | ------------------ | -------------------------------- |
-  | or     | 或             | age=19 or age=20   | 19-true,21-false                 |
-  | and    | 与             | age>19 and age <21 | 20-true,22-false                 |
-  | mod    | 除法的余数     | 5 mod 2            | 1                                |
-  | \|     | 计算两个节点集 | //book \| //cd     | 返回所有拥有book和cd元素的节点集 |
-  | +      | 加法           | 6+4                | 10                               |
-  | -      | 减法           | 6-4                | 2                                |
-  | *      | 乘法           | 6*4                | 24                               |
-  | div    | 除法           | 8 div 4            | 2                                |
-  | =      | 等于           | age=19             | 19-true,20-false                 |
-  | !=     | 不等于         | age!=19            | 19-false,18-true                 |
-  | <      | 小于           | age<19             | 19-false,18-false                |
-  | <=     | 小于或等于     | age<=19            | 19-true,20-false                 |
-  | >      | 大于           | age>19             | 19-false,21-true                 |
-  | >=     | 大于或等于     | age>=19            | 19-true,18-false                 |
-
-* 按序选择
-
-  ```python
-  from lxml import etree
-  
-  text = '''
-  <div>
-      <ul>
-          <li class="item-0"><a href="link1.html">first item</a></li>
-          <li class="item-1"><a href="link2.html">second item</a></li>
-          <li class="item-inactive"><a href="link3.html">third item</a></li>
-          <li class="item-0"><a href="link4.html">fourth item</a></li>
-          <li class="item-1"><a href="link5.html">fifth item</a></li>
-      </ul>
-  <div>
-  '''
-  
-  html = etree.HTML(text)
-  result = html.xpath('//li[1]/a/text()')
-  print(result)
-  result = html.xpath('//li[last()]/a/text()')
-  print(result)
-  result = html.xpath('//li[last()-2]/a/text()')
-  print(result)
-  result = html.xpath('//li[position()<3]/a/text()')
-  print(result)
-  ```
-
-* 节点轴选择
-
-  ```python
-  from lxml import etree
-  
-  text = '''
-  <div>
-      <ul>
-          <li class="item-0"><a href="link1.html">first item</a></li>
-          <li class="item-1"><a href="link2.html">second item</a></li>
-          <li class="item-inactive"><a href="link3.html">third item</a></li>
-          <li class="item-0"><a href="link4.html">fourth item</a></li>
-          <li class="item-1"><a href="link5.html">fifth item</a></li>
-      </ul>
-  <div>
-  '''
-  html = etree.HTML(text)
-  # ancestor可以获取祖先节点，其后需要跟两个冒号，*匹配所有节点
-  result = html.xpath('//li[1]/ancestor::*')
-  print(result)
-  result = html.xpath('//li[1]/ancestor::div')
-  print(result)
-  # attribute获取所有属性值
-  result = html.xpath('//li[1]/attribute::*')
-  print(result)
-  # child获取所有直接子节点
-  result = html.xpath('//li[1]/child::a[@href="link1.html"]')
-  print(result)
-  # descendant可以获取所有子孙节点
-  result = html.xpath('//li[1]/descendant::span')
-  print(result)
-  # following可以获取当前节点之后的所有节点，可以使用索引
-  result = html.xpath('//li[1]/following::*[2]')
-  print(result)
-  # following-sibling可以获取当前节点之后的所有同级节点
-  result = html.xpath('//li[1]/following-sibling::*')
-  print(result)
-  ```
-
-  > [更多参考](http://www.w3school.com.cn/xpath/index.asp)
-
-### 4.2 使用BeautifulSoup
-
-​	Beautiful  Soup就是Python的一个HTML或XML的解析库，可以用它来方便地从网页中提取数据
-
-* 基本用法
-
-  ```python
-  html = '''
-  <!DOCTYPE html>
-  <html lang="en">
-  
-  <head>
-      <title>Document</title>
-  </head>
-  
-  <body>
-      <p class="title" name="dromouse">
-          <b>The Dormouse's story</b>
-      </p>
-      <p class="story">
-          Once upon a time there were three little sisters;and their names were
-          <a href="http://example.com/elsie" class="sister" id="link1">
-              <!-- Elsie -->
-          </a>,
-          <a href="http://example.com/lacie" class="sister" id="link2">Lacie</a> and
-          <a href="http://example.com/tillie" class="sister" id="link2">Tillie</a>; and they lived at the bottom of a well.</p>
-      </p>
-      <p class="story">
-          ...
-      </p>
-  </html>
-  '''
-  
-  from bs4 import BeautifulSoup
-  soup = BeautifulSoup(html,'lxml')
-  print(soup.prettify())
-  print(soup.title.string)
-  ```
-
-* 节点选择器
-
-  * 选择元素
+    *   urllib.request模块提供了最基本的构造HTTP请求的方法，利用它可以模拟浏览器的一个请求发起过程，同时它还带有处理授权验证、重定向、浏览器Cookies以及其他内容
 
     ```python
-    print(soup.title)
-    print(type(soup.title))
-    print(soup.title.string)
-    print(soup.head)
-    # 当存在多个节点，这种选择方式只会选择第一个匹配的节点
-    print(soup.p)
-    ```
-
-  * 提取信息
-
-    1. 获取名称
-    2. 获取属性
-    3. 获取内容
-
-    ```python
-    print(soup.title.name)
+    import urllib.request
     
-    print(soup.p.attrs)
-    print(soup.p.attrs['name'])
-    
-    print(soup.p.b.string)
+    response = urllib.request.urlopen('https://www.python.org')
+    print(type(response))
+    print(response.msg)
+    print(response.version)
+    print(response.status)
+    print(response.reason)
+    print(response.debuglevel)
+    print(response.closed)
+    print(response.getheaders())
+    print(response.getheader('Content-Type'))
+    # print(response.read().decode('utf-8'))
     ```
 
-  * 嵌套选择
+    *   urlopen()的API
 
-    ```python
-    print(soup.head.title)
-    print(type(soup.head.title))
-    print(soup.head.title.string)
-    ```
+        ```python
+        urllib.request.open(url,data=None,[timeout,]*,cafile=None,cadefault=False,context=None)
+        ```
 
-  * 关联选择 —— 先选中某一节点元素，然后以它为基准再选择它的子节点、父节点、兄弟节点等
+        *   data参数：data参数是可选的，如要哦那个bytes()方法转化为字节流编码格式的内容。
 
-    * 子节点和孙节点
+            >   如果传递了这个参数，则它的请求方式不再是GET，而是POST方法。
 
-* 方法选择器
+            ```python
+            import urllib.parse
+            import urllib.request
+            
+            # 传递参数word，值是hello。它需要被转码成bytes(字节流)类型。其中转字节流采用了bytes()方法
+            # 该方法的第一个参数是str(字符串)类型，需要用urllib.parse模块里的urlencode()方法将参数字典转化为字符串
+            # 第二个参数指定编码格式
+            data = bytes(urllib.parse.urlencode({'word':'hello'}),encoding='utf-8')
+            response = urllib.request.urlopen('http://httpbin.org/post',data=data)
+            print(response.read())
+            ```
 
-* CSS选择器
+        *   timeout参数：用于设置超时时间，单位为秒，若超出时间还未得到响应，则抛出异常。
 
-### 4.3 使用pyquery
+            ```python
+            import urllib.request
+            import urllib.error
+            
+            try:
+                response = urllib.request.urlopen('http://httpbin.org/get',timeout=0.1)
+            except urllib.error.URLError as e:
+                print(e.reason)
+            ```
+
+        *   其他参数
+
+            *   context参数：它必须是ssl.SSLContext类型，用来指定SSL设置
+            *   cafile和capath这两个参数分别指定CA证书和它的路径，这个再请求HTTPS链接是会有用
+            *   cadefault参数已弃用，默认值为False
+
+    *   Request
+
+        ```python
+        import urllib.request
+        
+        # 依然使用urlopen()方法来发送请求，但是该方法的参数不再是URL，而是一个Request类型的对象
+        # 通过构造这种数据结构，一方面可以将请求独立成一个对象，另一方面可更加丰富和灵活地配置参数
+        request = urllib.request.Request('https://python.org')
+        response = urllib.request.urlopen(request)
+        print(response.read().decode('utf-8'))
+        ```
+
+        *   构造方法参数
+
+            ```python
+            class urllib.request.Request(url,data=None,headers={},origin_req_host=None,unverifiable=False,method=None)
+            # url用于请求URL，这个是必须的参数，其他都是可选参数
+            ```
+
+            *   data参数，如果要传，必须穿bytes（字节流）类型，如果是字典，可以先用urllib.parse模块里的urlencode()编码
+            *   headers参数，是一个字典，构造请求时通过headers参数直接构造，也可以通过调用请求实例的add_header()方法添加，默认的User-Agent是Python-urllib。
+            *   origin_req_host指的是请求方的host名称或IP地址
+            *   unverifiable表示这个请求是否是无法验证的，默认是False，即用户没有足够权限来选择接收这个请求的结果。例如：我们请求一个HTML文档中的图片，但是我们没有自动抓取图像的权限，这时unverifiable的值为True
+            *   method参数：该参数是一个字符串用来指示请求使用的方法，比如GET、POST和PUT等
+
+            ```python
+            from urllib import request,parse
+            
+            url = 'http://httpbin.org/post'
+            headers = {
+                'User-Agent':'Mozilla/4.0 (compatible;MSIE 5.5;Windows NT)',
+                'Host':'httpbin.org'
+            }
+            dict = {
+                'name':'Germey'
+            }
+            data = bytes(parse.urlencode(dict),encoding='utf-8')
+            req = request.Request(url=url,data=data,headers=headers,method='POST')
+            # req = request.Request(url=url,data=data,method='POST')
+            # req.add_headers('User-Agent':'Mozilla/4.0 (compatible;MSIE 5.5;Windows NT)','Host':'httpbin.org')
+            response = request.urlopen(req)
+            print(response.read().decode('utf-8'))
+            ```
+
+*   高级用法
+
+    *   Handler
+
+        urllib.request模块里的BaseHandler类，是所有其他Handler的父类，它提供了最基本的方法，例如default_open()、protocol_request()等
+
+        *   HTTPDefaultErrorHandler：用于处理HTTP相应错误，错误都会抛出HTTPError类型的异常
+        *   HTTPRedirectHandler：用于处理重定向
+        *   HTTPCookieProcessor：用于处理Cookies
+        *   ProxyHandler：用于设置代理，默认代理为空
+        *   HTTPPasswordMgr：用于管理密码，它为了了用户名和密码的表
+        *   HTTPBasicAuthHandler：用于管理认证，如果打开一个链接需要认证，那么可以用它来解决认证问题
+
+    *   OpenerDirector，称为Opener，可以利用Handler构建Opener
+
+    *   实例
+
+        *   验证
+
+            ```python
+            
+            ```
+
+            
+
+        *   代理
+
+        *   Cookies
 
 ## 五、数据存储
 
 ### 5.1 文件存储
 
-#### TXT存储
+### TXT存储
 
 * 实例：保存知乎上“发现”页面的“热门话题”部分，将其问题和答案统一保存成文本形式
 
@@ -2016,13 +1291,11 @@ with open('data.csv','w',encoding='utf-8') as csvfile:
 
 ## 六、Ajax数据爬取
 
-### 6.1 什么是Ajax
+### 什么是Ajax
 
 > Ajax全称为Asynchronous JavaScript and XML，即异步的JavaScript和XML。它不是一门编程语言，而是利用JavaScript在保证页面不被刷新，页面链接不改变的情况下与服务器交换数据并更新部分网页的的技术。
 
 #### 基本原理
-
-* 实例引入：很多网页都有下滑查看更多的选项，下滑页面会出现加载动画，一段时间过后才会出现新的内容，这个过程就是Ajax加载的过程。
 
 * 发送Ajax请求到网页更新的过程分为以下3步：
 
@@ -2060,434 +1333,12 @@ with open('data.csv','w',encoding='utf-8') as csvfile:
 
   JavaScript有改变网页内容的能力，解析完响应内容之后，就可以调用JavaScript来针对解析完的内容对网页进行下一步处理。比如，通过document。getElementById().innerHTML就可以对元素内的源代码进行更改。这样网页显示的内容就改变了，这样的操作也被称为DOM操作。
 
-### 6.2 Ajax分析方法
+### Ajax分析方法
 
 1. 查看请求
-
-   ![img](/var/folders/g_/cckjvp_d1b39h60g3s9grbp00000gn/T/abnerworks.Typora/image.tiff)
-
-   ![img](/var/folders/g_/cckjvp_d1b39h60g3s9grbp00000gn/T/abnerworks.Typora/image-20180810214920108.tiff)
-
-   XHR即是Ajax特殊的请求类型。
-
 2. 过滤请求
 
-   ![img](https://ws4.sinaimg.cn/large/0069RVTdgy1fu4y2uiikhj31kw0v5174.jpg)
-
-### 6.3 Ajax结果提取
-
-* 分析请求
-
-### 6.4 分析Ajax爬取今日头条街拍美图
-
-* 抓取分析
-
-  * 目标：https://www.toutiao.com/search/?keyword=%E8%A1%97%E6%8B%8D
-
-* 实战演练
-
-  ```python
-  
-  ```
-
-  
-
 ## 七、动态渲染页面爬取
-
-### 7.1 Selenium的使用
-
-> Selenium是一个自动化测试工具，利用它可以驱动浏览器执行特定的动作，如点击、下拉等操作，同时还可以获取浏览器当前呈现的页面的源代码，做到可见既可爬。
-
-* 安装selenium
-
-  `pip install selenium`
-
-  * 安装chromedriver
-
-    * [下载地址](http://chromedriver.chromium.org/downloads)
-
-    * 解压并移动到python安装目录下`sudo mv chromedriver /usr/bin`
-
-    * 配置ChromeDriver到$PATH
-
-      ```bash
-      export PATH="$PATH:/usr/local/chromedriver"
-      source ~/.profile
-      ```
-
-    * 输出`Only local connections are allowed`则配置完成
-
-* 基本使用
-
-  ```python
-  from selenium import webdriver
-  from selenium.webdriver.common.by import By
-  from selenium.webdriver.common.keys import Keys
-  from selenium.webdriver.support import expected_conditions as EC
-  from selenium.webdriver.support.wait import WebDriverWait
-  
-  brower = webdriver.Chrome()
-  
-  try:
-      brower.get('https://www.baidu.com')
-      input = brower.find_element_by_id('kw')
-      input.send_keys('Python')
-      input.send_keys(Keys.ENTER)
-      wait = WebDriverWait(brower,1000)
-      wait.until(EC.presence_of_element_located((By.ID,'content_left')))
-      print(brower.current_url)
-      # print(brower.get_cookies())
-      # print(brower.page_source)
-  finally:
-      brower.close()
-  ```
-
-  * 声明浏览器支持对象
-
-    ```python
-    from selenium import webdriver
-    
-    browser = webdriver.Chrome()
-    browser = webdriver.Firefox()
-    browser = webdriver.Edge()
-    browser = webdriver.PhantomJS()
-    browser = webdriver.Safari()
-    ```
-
-  * 访问页面
-
-    ```python
-    from selenium import webdriver
-    
-    browser = webdriver.Chrome()
-    browser.get('https://www.taobao.com')
-    print(browser.page_source)
-    browser.close()
-    ```
-
-  * 查找节点
-
-    * 单个节点，可以根据name、id获取，还可以根据XPath、CSS选择器等获取的方式
-
-      ```python
-      from selenium import webdriver
-      
-      browser = webdriver.Chrome()
-      browser.get('https://www.taobao.com')
-      input_first = browser.find_element_by_id('q')
-      input_second = browser.find_element_by_css_selector('#q')
-      input_third = browser.find_element_by_xpath('//*[@id="q"]')
-      print(input_first,input_second,input_third)
-      browser.close()
-      
-      # 所有获取单个节点的方法
-      browser.find_element_by_id()
-      browser.find_element_by_name()
-      browser.find_element_by_xpath()
-      browser.find_element_by_link_text()
-      browser.find_element_by_tag_name()
-      browser.find_element_by_class_name()
-      browser.find_element_by_css_selector()
-      
-      # 通用方法
-      browser.find_element(By.ID,id)
-      ```
-
-    * 多个节点
-
-      ```python
-      from selenium import webdriver
-      
-      browser = webdriver.Chrome()
-      browser.get('https://www.taobao.com')
-      lis = browser.find_elements_by_css_selector('.service-bd li')
-      print(lis)
-      browser.close()
-      
-      # 所有获取多个节点的方法
-      browser.find_elements_by_id()
-      browser.find_elements_by_name()
-      browser.find_elements_by_xpath()
-      browser.find_elements_by_link_text()
-      browser.find_elements_by_partial_link_text()
-      browser.find_elements_by_tag_name()
-      browser.find_elements_by_class_name()
-      browser.find_elements_by_css_selector()
-      
-      # 通用方法
-      browser.find_elements(By.ID,id)
-      ```
-
-  * 节点交互
-
-    * 常见用法有：输入文字send_keys()方法，清空文字clear()方法，点击按钮click()方法
-
-    ```python
-    from selenium import webdriver
-    import time
-    
-    browser = webdriver.Chrome()
-    browser.get('https://www.taobao.com')
-    input = browser.find_element_by_id('q')
-    input.send_keys('iPhone')
-    time.sleep(5)
-    input.clear()
-    input.send_keys('ipad')
-    button = browser.find_element_by_class_name('btn-search')
-    button.click()
-    ```
-
-    > [官方文档](http://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.remote.webelement)
-
-  * 动作链
-
-    ```python
-    from selenium import webdriver
-    from selenium.webdriver import ActionChains
-    
-    browser = webdriver.Chrome()
-    url = 'http://www.runoob.com/try/try.php?filename=jqueryui-example-droppable'
-    browser.get(url)
-    browser.switch_to.frame('iframeResult')
-    source = browser.find_element_by_css_selector('#draggable')
-    target = browser.find_element_by_css_selector('#droppable')
-    actions = ActionChains(browser)
-    actions.drag_and_drop(source,target)
-    actions.perform()
-    ```
-
-  * 执行JavaScript
-
-    ```python
-    from selenium import webdriver
-    
-    browser = webdriver.Chrome()
-    browser.get('https://www.zhihu.com/explore')
-    browser.execute_script('window.scrollTo(0,document.body.scrollHeight)')
-    browser.execute_script('alert("To Bottom")')
-    ```
-
-  * 获取节点信息
-
-    * 获取属性
-
-      ```python
-      from selenium import webdriver
-      from selenium.webdriver import ActionChains
-      
-      browser = webdriver.Chrome()
-      url = 'https://www.zhihu.com/explore'
-      browser.get(url)
-      logo = browser.find_element_by_id('zh-top-link-logo')
-      print(logo)
-      print(logo.get_attribute('class'))
-      ```
-
-    * 获取文本值
-
-      ```python
-      from selenium import webdriver
-      
-      browser = webdriver.Chrome()
-      url = 'https://www.zhihu.com/explore'
-      browser.get(url)
-      input = browser.find_element_by_class_name('js-signin-noauth')
-      print(input.text)
-      ```
-
-    * 获取id、位置、标签名和大小
-
-      ```python
-      from selenium import webdriver
-      
-      browser = webdriver.Chrome()
-      url = 'https://www.zhihu.com/explore'
-      browser.get(url)
-      input = browser.find_element_by_class_name('zu-top-add-question')
-      print(input.id)
-      print(input.location)
-      print(input.tag_name)
-      print(input.size)
-      ```
-
-  * 切换Frame
-
-    网页中有一种节点叫作iframe，它的结构和外部网页的结构完全一致。Selenium打开网页后，它默认实在父级Frame里面操作，如果页面中还有子Frame，它是不能获取到子Frame里面的节点的，需要使用switch_to.frame()方法来切换Frame。
-
-    ```python
-    import time
-    from selenium import webdriver
-    from selenium.common.exceptions import NoSuchElementException
-    
-    browser = webdriver.Chrome()
-    url = 'http://www.runoob.com/try/try.php?filename=jqueryui-api-droppable'
-    browser.get(url)
-    browser.switch_to.frame('iframeResult')
-    try:
-        logo = browser.find_element_by_class_name('logo')
-    except NoSuchElementException:
-        print('no logo')
-    browser.switch_to.parent_frame()
-    logo = browser.find_element_by_class_name('logo')
-    print(logo)
-    print(logo.text)
-    ```
-
-  * 延时等待
-
-    在Selenium中，get()方法会在网页框架加载结束后结束执行，但可能并不是浏览器完全加载完成的页面，所以需要延时等待一定时间，确保节点已经加载出来。
-
-    * 隐式等待
-
-      使用隐式等待执行测试的时候，如果Selenium没有在DOM中找到节点，将继续等待，超出设定时间则抛出找不到节点的异常，默认时间为0。
-
-      ```python
-      from selenium import webdriver
-      
-      option = webdriver.ChromeOptions()
-      option.add_argument('-headless')
-      browser = webdriver.Chrome(options=option)
-      browser.implicitly_wait(10)
-      browser.get('https://www.zhihu.com/explore')
-      input = browser.find_element_by_class_name('zu-top-add-question')
-      print(input)
-      ```
-
-    * 显式等待
-
-      显式等待指定要查找的节点，然后指定一个最长等待时间。如果在规定时间内加载出该节点，就返回查找的节点；如果未加载出该节点，则抛出异常。
-
-      ```python
-      from selenium import webdriver
-      from selenium.webdriver.common.by import By
-      from selenium.webdriver.support.ui import WebDriverWait
-      from selenium.webdriver.support import expected_conditions as EC
-      
-      option = webdriver.ChromeOptions()
-      option.add_argument('-headless')
-      browser = webdriver.Chrome(options=option)
-      # browser = webdriver.Chrome()
-      browser.get('https://www.taobao.com/')
-      wait = WebDriverWait(browser,10)
-      # presence_of_element_located的参数是节点的定位元祖，也就是ID为q的节点搜索框
-      input = wait.until(EC.presence_of_element_located((By.ID,'q')))
-      button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,'.btn-search')))
-      print(input,button)
-      ```
-
-      * 其他等待条件
-
-        | 等待条件                               | 含义                                            |
-        | -------------------------------------- | ----------------------------------------------- |
-        | title_is                               | 标题是某内容                                    |
-        | title_contains                         | 标题包含某内容                                  |
-        | presence_of_element_located            | 节点加载出来，传入定位元祖                      |
-        | visibility_of+element_located          | 节点可见，传入定位元祖                          |
-        | visibility_of                          | 可见，传入节点对象                              |
-        | presence_of_all_elements_located       | 所有节点加载出来                                |
-        | text_to_be_present_in_element          | 某个节点文本包含某文字                          |
-        | text_to_bo_present_in_element_value    | 某个节点值包含某文字                            |
-        | frame_to_bo_available_and_switch_to_it | 加载并切换                                      |
-        | invisibility_of_element_located        | 节点不可见                                      |
-        | element_to_be_clickable                | 节点可点击                                      |
-        | staleness_of                           | 判断一个节点是否仍在DOM，可判断页面是否已经刷新 |
-        | element_to_be_selected                 | 节点可选择，传入节点对象                        |
-        | element_located_to_be_selected         | 节点可选择，传入定位元祖                        |
-        | element_selection_state_to_be          | 传入节点对象及状态，相等为True，否则False       |
-        | element_located_selection_state_to_be  | 传入定位元祖及状态，相等为True，否则False       |
-        | alert_is_present                       | 是否出现警告                                    |
-
-        > [更多参考官方文档](http://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.support.expected_conditions)
-
-  * 前进和后退
-
-    ```python
-    import time
-    from selenium import webdriver
-    
-    browser = webdriver.Chrome()
-    browser.get('https://www.taobao.com')
-    browser.get('https://www.taobao.com')
-    browser.get('https://www.baidu.com')
-    browser.back()
-    time.sleep(1)
-    browser.forward()
-    browser.close()
-    ```
-
-  * Cookies
-
-    ```python
-    from selenium import webdriver
-    
-    option = webdriver.ChromeOptions()
-    option.add_argument('-headless')
-    browser = webdriver.Chrome(options=option)
-    browser.get('https://www.zhihu.com/explore')
-    print(browser.get_cookies())
-    browser.add_cookie({'name':'name','domain':'www.zhihu.com','value':'germey'})
-    print('-' * 50)
-    print(browser.get_cookies())
-    browser.delete_all_cookies()
-    print(browser.get_cookies())
-    ```
-
-  * 选项卡管理
-
-    ```python
-    import time
-    from selenium import webdriver
-    
-    browser = webdriver.Chrome()
-    browser.get('https://www.baidu.com')
-    browser.execute_script('window.open()')
-    print(browser.window_handles)
-    browser.switch_to_window(browser.window_handles[1])
-    browser.get('https://www.taobao.com')
-    time.sleep(1)
-    browser.switch_to_window(browser.window_handles[0])
-    browser.get('https://www.python.org')
-    ```
-
-  * 异常处理
-
-    ```python
-    from selenium import webdriver
-    from selenium.common.exceptions import TimeoutException,NoSuchElementException
-    
-    browser = webdriver.Chrome()
-    try:
-        browser.get('https://www.baidu.com')
-    except TimeoutException:
-        print('time out')
-    try:
-        browser.find_element_by_id('hello')
-    except NoSuchElementException:
-        print('no element')
-    finally:
-        browser.close()
-    
-    ```
-
-### 7.2 Splash的使用
-
-* 功能
-  * 异步方式处理多个网页渲染过程
-  * 获取渲染后的页面的源代码或截图
-  * 通过关闭图片渲染或使用adblock规则来加快页面渲染速度
-  * 可执行特定的JavaScript脚本
-  * 可通过Lua脚本来控制页面渲染速度
-  * 获取渲染的详细过程病通过HAR格式呈现
-* 安装
-  * 安装docker`brew cask install docker`
-  * 现在安装spalsh`docker pull scrapinghub/splash`
-  * 运行spalsh`docker run -p 8050:8050 -p 5023:5023 scrapinghub/splash`
-  * 使用浏览器访问`http://localhost:8050`
-* 
-
-### 7.3 Splash负载均衡配置
-
-### 7.4 使用Selenium爬取淘宝商品
 
 ## 八、验证码识别
 
